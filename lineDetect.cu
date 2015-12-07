@@ -1,7 +1,7 @@
 #include "utils.h"
 #include <stdio.h>
 
-__global__  whiteDect(const uchar4* const rgbaImage, unsigned char* const newImage,  int numRows, int numCols){
+__global__ void  whiteDect(const uchar4* const rgbaImage, unsigned char* const newImage,  int numRows, int numCols){
 	int col = threadIdx.x;
 	int row = blockIdx.x;
 	int xID = col + row * numRows;
@@ -13,7 +13,7 @@ __global__  whiteDect(const uchar4* const rgbaImage, unsigned char* const newIma
 
 }
 
-__global__  whiteToRed(const uchar4* const rgbaImage, unsigned char* const newImage,  int numRows, int numCols){
+__global__ void whiteToRed(const uchar4* const rgbaImage, unsigned char* const newImage,  int numRows, int numCols){
 	int col = threadIdx.x;
 	int row = blockIdx.x;
 	int xID = col + row * numRows;
@@ -26,5 +26,14 @@ __global__  whiteToRed(const uchar4* const rgbaImage, unsigned char* const newIm
 }
 
 void lineDetect(const uchar4 * const h_rgbaImage, uchar4 * const d_rgbaImage, unsigned char* const d_greyImage, size_t numRows, size_t numCols) {
+	const dim3 blockSize(numRows, 1, 1);
+	const dim3 gridSize( numCols, 1, 1); 
 
+	whiteDect<<<gridSize, blockSize>>>(d_rgbaImage, d_greyImage, numRows, numCols);
+	__syncthreads();
+	whiteToRed<<<gridSize, blockSize>>>(d_rgbaImage, d_greyImage, numRows, numCols);
+	__syncthreads();
+	 cudaDeviceSynchronize();
+	 checkCudaErrors(cudaGetLastError());
+}
 
