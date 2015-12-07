@@ -8,7 +8,7 @@
 #include "reference_calc.h"
 #include "compare.h"
 
-void your_rgba_to_greyscale(const uchar4 * const h_rgbaImage, 
+void lineDetect(const uchar4 * const h_rgbaImage, 
                             uchar4 * const d_rgbaImage,
                             unsigned char* const d_greyImage, 
                             size_t numRows, size_t numCols);
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
   GpuTimer timer;
   timer.Start();
   //call the students' code
-  your_rgba_to_greyscale(h_rgbaImage, d_rgbaImage, d_greyImage, numRows(), numCols());
+  lineDetect(h_rgbaImage, d_rgbaImage, d_greyImage, numRows(), numCols());
   timer.Stop();
   cudaDeviceSynchronize(); checkCudaErrors(cudaGetLastError());
 
